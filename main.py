@@ -1,3 +1,5 @@
+import random
+
 from Specimen.united import *
 
 import telebot
@@ -37,7 +39,9 @@ def start(message):
         session.add(current_user)
 
     bot.send_message(message.chat.id,
-                     f"hello {current_user.username}!",
+                     f"hello {current_user.username}! \nif anything, this bot is made very badly. And in general, "
+                     f"I'm some kind of leftist person who receives data about you, and you also give me your "
+                     f"schedule, so if I'm not too lazy, I'll take it and hunt you down and stalk you. ",
                      reply_markup=keyboard)
 
     session.commit()
@@ -58,17 +62,42 @@ def handle_docs(message):
             with open(src, 'wb') as new_file:
                 new_file.write(downloaded_file)
 
-            current_user.schedule = tools.from_file_to_schedule_array(message.from_user.id)
+            id_of_timetable = datetime.today().second + message.from_user.id
+
+            exemplar = Timetable(
+                id=id_of_timetable,
+                name=file_info.file_path,
+                creator=message.from_user.id,
+                table=tools.from_file_to_schedule_array(message.from_user.id)
+            )
+
             bot.reply_to(message, "saved! my congratulations, best wishes, health to the victims (well, lol, you are "
                                   "studying at the university).")
-            connection.update(current_user)
+
+            session.query(Timetable).filter(Timetable.creator == message.from_user.id,
+                                            Timetable.public == False).delete()
+
+            session.add(exemplar)
+            session.commit()
 
         else:
             bot.send_message(message.chat.id,
-                             languages.assembly['not in the database']['ru'])
+                             "i can't find you in my stalking database")
 
-    except Exception as e:
-        bot.reply_to(message, e)
+    except Exception as ex:
+        bot.reply_to(message, ex)
+
+
+@bot.message_handler(commands=['yesterday'])
+def yesterday(message):
+    current_user = session.get(User, message.from_user.id)
+
+    week_parity = int(tools.get_even())
+    if current_user.id is None:
+        bot.send_message(message.chat.id,
+                         "i can't find you in my stalking database")
+    else:
+        pass
 
 
 @bot.callback_query_handler(func=lambda call: True)
