@@ -36,7 +36,11 @@ def start(message):
 
     if current_user is None:
         current_user = User(id=message.from_user.id, username=message.from_user.username, language=lang)
+
         session.add(current_user)
+        session.commit()
+        session.add(Settings(user_id=message.from_user.id))
+        session.add(Positions(user_id=message.from_user.id))
 
     bot.send_message(message.chat.id,
                      f"hello {current_user.username}! \nif anything, this bot is made very badly. And in general, "
@@ -51,6 +55,7 @@ def start(message):
 def handle_docs(message):
     try:
         current_user = session.get(User, message.from_user.id)
+        settings = session.get(Settings, message.from_user.id)
 
         if current_user is not None:
 
@@ -64,40 +69,50 @@ def handle_docs(message):
 
             id_of_timetable = datetime.today().second + message.from_user.id
 
+            array_of_schedule = tools.from_file_to_schedule_array(message.from_user.id)
+
             exemplar = Timetable(
                 id=id_of_timetable,
                 name=file_info.file_path,
                 creator=message.from_user.id,
-                table=tools.from_file_to_schedule_array(message.from_user.id)
+                table_E=tools.make_the_same_number_of_elements(array_of_schedule[0]),
+                table_NE=tools.make_the_same_number_of_elements(array_of_schedule[1])
             )
-
-            bot.reply_to(message, "saved! my congratulations, best wishes, health to the victims (well, lol, you are "
-                                  "studying at the university).")
-
-            session.query(Timetable).filter(Timetable.creator == message.from_user.id,
-                                            Timetable.public == False).delete()
 
             session.add(exemplar)
             session.commit()
 
+            settings.id_of_the_selected_schedule = id_of_timetable
+            session.commit()
+
+            session.query(Timetable).filter(Timetable.id != id_of_timetable,
+                                            Timetable.creator == message.from_user.id,
+                                            Timetable.public == False).delete()
+            session.commit()
+
+            bot.reply_to(message, "saved! my congratulations, best wishes, health to the victims (well, lol, you are "
+                                  "studying at the university).")
         else:
             bot.send_message(message.chat.id,
                              "i can't find you in my stalking database")
 
     except Exception as ex:
         bot.reply_to(message, ex)
+        session.rollback()
 
 
-@bot.message_handler(commands=['yesterday'])
-def yesterday(message):
+@bot.message_handler(commands=['today'])
+def today(message):
     current_user = session.get(User, message.from_user.id)
 
-    week_parity = int(tools.get_even())
+    week_parity = tools.get_even()
     if current_user.id is None:
         bot.send_message(message.chat.id,
                          "i can't find you in my stalking database")
     else:
-        pass
+        bot.send_message(message.chat.id, message_creators.daily_schedule(current_user.id,
+                                                                          week_parity,
+                                                                          datetime.today().weekday()))
 
 
 @bot.callback_query_handler(func=lambda call: True)

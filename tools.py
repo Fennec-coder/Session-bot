@@ -76,3 +76,17 @@ def from_file_to_schedule_array(name):
     file.close()
     os.remove('temp/' + str(name) + '.txt')
     return answer
+
+
+def make_the_same_number_of_elements(array):
+    max = 0
+    for i in array:
+        if len(i) > max:
+            max = len(i)
+
+    for c in range(len(array)):
+        times = max - len(array[c])
+        for i in range(times):
+            array[c].append('')
+
+    return array

@@ -10,4 +10,5 @@ class Timetable(base):
     creator = Column(Integer, default=0)
     public = Column(Boolean, default=False)
 
-    table = Column(postgresql.ARRAY(String))
+    table_E = Column(postgresql.ARRAY(String))
+    table_NE = Column(postgresql.ARRAY(String))

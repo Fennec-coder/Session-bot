@@ -3,9 +3,8 @@ from Specimen.set import *
 
 class Positions(base):
     __tablename__ = 'positions'
-    id = Column(Integer, primary_key=True)
 
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     last_message = Column(String)
     week_even = Column(Boolean, default=False)  # поменять местами неделю
     day = Column(Integer, default=0)
