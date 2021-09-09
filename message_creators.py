@@ -5,6 +5,15 @@ from Specimen import united as template
 import tools
 
 
+def information_line(user_id=0):
+    user = template.session.get(template.User, user_id)
+    localtime = datetime.utcnow() + timedelta(minutes=user.utc * 60)
+
+    answer = f"{'E' if tools.get_even() else 'NE'} | {localtime.strftime('%H:%M')} | {localtime.strftime('%A')}"
+
+    return answer
+
+
 def daily_schedule(user_id=0, week=False, day=0):
     if user_id != 0:
         settings = template.session.query(template.Settings).where(template.Settings.user_id == user_id).first()
@@ -14,7 +23,7 @@ def daily_schedule(user_id=0, week=False, day=0):
         table = timetable.table_E[day] if week else timetable.table_NE[day]
 
         for lesson in range(len(table)):
-            answer += f"{lesson+1}: {table[lesson]}\n"
+            answer += f"{lesson + 1}: {table[lesson]}\n"
 
         return answer
     else:

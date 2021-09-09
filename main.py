@@ -1,5 +1,3 @@
-import random
-
 from Specimen.united import *
 
 import telebot
@@ -14,12 +12,6 @@ config.read("config/settings.ini")  # read the configuration from the ini file
 token = config["telegram"]["token"]
 
 bot = telebot.TeleBot(token)  # open a connection with a telegram
-
-# language selection (oh yea, real?)
-language_selection = types.InlineKeyboardMarkup()
-eng_button = types.InlineKeyboardButton(text="🇺🇸", callback_data='language us')
-rus_button = types.InlineKeyboardButton(text="🇷🇺", callback_data='language ru')
-language_selection.add(eng_button, rus_button)
 
 # hot buttons for issuing a schedule
 keyboard = telebot.types.ReplyKeyboardMarkup(True)
@@ -110,14 +102,17 @@ def today(message):
         bot.send_message(message.chat.id,
                          "i can't find you in my stalking database")
     else:
-        bot.send_message(message.chat.id, message_creators.daily_schedule(current_user.id,
-                                                                          week_parity,
-                                                                          datetime.today().weekday()))
+        answer = message_creators.information_line(current_user.id) + \
+                 message_creators.daily_schedule(current_user.id,
+                                                 week_parity,
+                                                 datetime.today().weekday())
+
+        bot.send_message(message.chat.id, answer)
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_language(call):
-    answer = message_creators.language(user=User.User(call.message.chat.id), user_language='ru')
+    answer = "-"
 
     bot.edit_message_text(chat_id=call.message.chat.id,
                           message_id=call.message.message_id,
