@@ -33,6 +33,8 @@ def start(message):
         session.commit()
         session.add(Settings(user_id=message.from_user.id))
         session.add(Positions(user_id=message.from_user.id))
+    else:
+        current_user.username = message.from_user.username
 
     bot.send_message(message.chat.id,
                      f"hello {current_user.username}! \nif anything, this bot is made very badly. And in general, "
@@ -106,6 +108,32 @@ def today(message):
                  message_creators.daily_schedule(current_user.id,
                                                  week_parity,
                                                  datetime.today().weekday())
+
+        bot.send_message(message.chat.id, answer)
+
+
+@bot.message_handler(commands=['yesterday'])
+def yesterday(message):
+    current_user = session.get(User, message.from_user.id)
+
+    week_parity = tools.get_even()
+    if current_user.id is None:
+        bot.send_message(message.chat.id,
+                         "i can't find you in my stalking database")
+    else:
+        wd = datetime.today().weekday()
+        if wd > 0:
+            wd = wd - 1
+        else:
+            wd = 6
+        week_parity = not week_parity if wd == 6 else week_parity
+
+        answer = message_creators.information_line(current_user.id,
+                                                   week_parity,
+                                                   wd) + \
+                 message_creators.daily_schedule(current_user.id,
+                                                 week_parity,
+                                                 wd)
 
         bot.send_message(message.chat.id, answer)
 

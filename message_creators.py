@@ -5,11 +5,12 @@ from Specimen import united as template
 import tools
 
 
-def information_line(user_id=0):
+def information_line(user_id=0, week=tools.get_even(), day=datetime.today().weekday()):
     user = template.session.get(template.User, user_id)
     localtime = datetime.utcnow() + timedelta(minutes=user.utc * 60)
 
-    answer = f"{'E' if tools.get_even() else 'NE'} | {localtime.strftime('%H:%M')} | {localtime.strftime('%A')}"
+    answer = f"{'E' if week else 'NE'} | {localtime.strftime('%H:%M')} | day: {day+1}"
+
 
     return answer
 
