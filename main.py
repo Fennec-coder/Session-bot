@@ -143,7 +143,7 @@ def tomorrow(message):
     current_user = session.get(User, message.from_user.id)
 
     week_parity = tools.get_even()
-    if current_user.id is None:
+    if current_user is None:
         bot.send_message(message.chat.id,
                          "i can't find you in my stalking database")
     else:
