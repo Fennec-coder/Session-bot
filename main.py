@@ -138,6 +138,32 @@ def yesterday(message):
         bot.send_message(message.chat.id, answer)
 
 
+@bot.message_handler(commands=['tomorrow'])
+def tomorrow(message):
+    current_user = session.get(User, message.from_user.id)
+
+    week_parity = tools.get_even()
+    if current_user is None:
+        bot.send_message(message.chat.id,
+                         "i can't find you in my stalking database")
+    else:
+        wd = datetime.today().weekday()
+        if wd < 6:
+            wd = wd + 1
+        else:
+            wd = 0
+        week_parity = not week_parity if wd == 0 else week_parity
+
+        answer = message_creators.information_line(current_user.id,
+                                                   week_parity,
+                                                   wd) + \
+                 message_creators.daily_schedule(current_user.id,
+                                                 week_parity,
+                                                 wd)
+
+        bot.send_message(message.chat.id, answer)
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_language(call):
     answer = "-"

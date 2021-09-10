@@ -3,9 +3,9 @@ from Specimen.set import *
 
 class User(base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
-    username = Column(String, default="no name")
-    date = Column(Date, default=datetime.today())  # date of the last message sent
-    language = Column(String, default='us')
-    utc = Column(Float, default=3)
+    username = db.Column(db.String, default="no name")
+    date = db.Column(db.Date, default=datetime.today())  # date of the last message sent
+    language = db.Column(db.String, default='us')
+    utc = db.Column(db.Float, default=3)

@@ -1,9 +1,8 @@
 from datetime import datetime
 import sqlalchemy as db
 
-from sqlalchemy import Column, String, Integer, Float, Boolean, ARRAY, Date, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-
+from datetime import datetime, timedelta, date
 from sqlalchemy_utils import create_database, database_exists
 
 import configparser

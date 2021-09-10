@@ -4,11 +4,11 @@ from Specimen.set import *
 class Positions(base):
     __tablename__ = 'positions'
 
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    last_message = Column(String)
-    week_even = Column(Boolean, default=False)  # поменять местами неделю
-    day = Column(Integer, default=0)
-    week = Column(Integer, default=1)
-    last_message_id = Column(Integer)
-    last_message_type = Column(String)
-    lesson = Column(Integer, default=0)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    last_message = db.Column(db.String)
+    week_even = db.Column(db.Boolean, default=False)  # поменять местами неделю
+    day = db.Column(db.Integer, default=0)
+    week = db.Column(db.Integer, default=1)
+    last_message_id = db.Column(db.Integer)
+    last_message_type = db.Column(db.String)
+    lesson = db.Column(db.Integer, default=0)
