@@ -9,8 +9,7 @@ def information_line(user_id=0, week=tools.get_even(), day=datetime.today().week
     user = template.session.get(template.User, user_id)
     localtime = datetime.utcnow() + timedelta(minutes=user.utc * 60)
 
-    answer = f"{'E' if week else 'NE'} | {localtime.strftime('%H:%M')} | day: {day+1}"
-
+    answer = f"{'E' if week else 'NE'} | {localtime.strftime('%H:%M')} | day: {day + 1}"
 
     return answer
 
