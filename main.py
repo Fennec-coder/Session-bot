@@ -1,3 +1,4 @@
+import os
 from Specimen.united import *
 
 import telebot
@@ -10,6 +11,8 @@ config = configparser.ConfigParser()  # parser object
 config.read("config/settings.ini")  # read the configuration from the ini file
 
 token = config["telegram"]["token"]
+if token == 'token':
+    token = os.environ['TELEGRAM_TOKEN']
 
 bot = telebot.TeleBot(token)  # open a connection with a telegram
 
