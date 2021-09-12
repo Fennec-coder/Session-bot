@@ -12,8 +12,8 @@ config = configparser.ConfigParser()  # parser object
 config.read("config/settings.ini")  # read the configuration from the ini file
 
 url = config["postgresql"]["url"]
-# if url == 'postgresql://postgres:admin@localhost:5432/session_bot':
-#     url = os.environ['DATABASE_URL']
+if url == 'postgresql://postgres:admin@localhost:5432/session_bot':
+    url = os.environ['DATABASE_URL_SQL']
 
 engine = db.create_engine(url)
 base = declarative_base()
