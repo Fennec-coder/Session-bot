@@ -6,7 +6,7 @@ class Positions(base):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     last_message = db.Column(db.String)
-    week_even = db.Column(db.Boolean, default=False)  # поменять местами неделю
+    week_even = db.Column(db.Boolean, default=False)
     day = db.Column(db.Integer, default=0)
     week = db.Column(db.Integer, default=1)
     last_message_id = db.Column(db.Integer)

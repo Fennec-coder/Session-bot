@@ -167,13 +167,65 @@ def tomorrow(message):
         bot.send_message(message.chat.id, answer)
 
 
-@bot.callback_query_handler(func=lambda call: True)
-def callback_language(call):
-    answer = "-"
+##### WEEK #####
+def _week(user_id):
+    current_user = session.get(User, user_id)
+    position = session.get(Positions, user_id)
+    answer = "i can't find you in my stalking database"
+
+    if current_user is not None:
+        answer = message_creators.information_line(current_user.id,
+                                                   position.week_even,
+                                                   position.day) + \
+                 message_creators.daily_schedule(current_user.id,
+                                                 position.week_even,
+                                                 position.day)
+    return answer
+
+
+@bot.message_handler(commands=['week'])
+def week(message):
+    bot.send_message(message.chat.id,
+                     _week(message.chat.id),
+                     reply_markup=message_creators.navigation_week(message.chat.id))
+
+
+#### NAVIGATION OF navigation_week ####
+
+@bot.callback_query_handler(lambda call: call.data == '-day')
+def callback_worker(call):
+    position = session.get(Positions, call.message.chat.id)
+    position.day = position.day - 1 if position.day > 0 else 6
+    session.commit()
 
     bot.edit_message_text(chat_id=call.message.chat.id,
                           message_id=call.message.message_id,
-                          text=answer)
+                          text=_week(call.message.chat.id),
+                          reply_markup=message_creators.navigation_week(call.message.chat.id))
+
+
+@bot.callback_query_handler(lambda call: call.data == '+day')
+def callback_worker(call):
+    position = session.get(Positions, call.message.chat.id)
+    position.day = position.day + 1 if position.day < 6 else 0
+    session.commit()
+
+    bot.edit_message_text(chat_id=call.message.chat.id,
+                          message_id=call.message.message_id,
+                          text=_week(call.message.chat.id),
+                          reply_markup=message_creators.navigation_week(call.message.chat.id))
+
+
+@bot.callback_query_handler(lambda call: call.data == '?week')
+def callback_worker(call):
+    position = session.get(Positions, call.message.chat.id)
+    position.week_even = not position.week_even
+    session.commit()
+
+    bot.edit_message_text(chat_id=call.message.chat.id,
+                          message_id=call.message.message_id,
+                          text=_week(call.message.chat.id),
+                          reply_markup=message_creators.navigation_week(call.message.chat.id))
 
 
 bot.polling(none_stop=True)

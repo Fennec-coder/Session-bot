@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, date
 import calendar
+import telebot
 
 from Specimen import united as template
 import tools
@@ -9,7 +10,7 @@ def information_line(user_id=0, week=tools.get_even(), day=datetime.today().week
     user = template.session.get(template.User, user_id)
     localtime = datetime.utcnow() + timedelta(minutes=user.utc * 60)
 
-    answer = f"{'E' if week else 'NE'} | {localtime.strftime('%H:%M')} | day: {day + 1}"
+    answer = f"{'Even' if week else 'Odd'} | {localtime.strftime('%H:%M')} | day: {day + 1}"
 
     return answer
 
@@ -36,3 +37,22 @@ def daily_schedule(user_id=0, week=False, day=0):
         return answer
     else:
         return "Sorry sweetheart, but I have no data about you, try to write /start.\n<3"
+
+
+def navigation_week(user_id):
+    position = template.session.get(template.Positions, user_id)
+
+    if position is None:
+        return
+
+    navigation = telebot.types.InlineKeyboardMarkup()
+    week_back = telebot.types.InlineKeyboardButton(text='<', callback_data='-day')
+    week_forward = telebot.types.InlineKeyboardButton(text='>', callback_data='+day')
+    navigation.add(week_back, week_forward)
+
+    week_another = telebot.types.InlineKeyboardButton(
+        text=f"show {'odd' if position.week_even else 'even'} week",
+        callback_data='?week')
+    navigation.add(week_another)
+
+    return navigation
