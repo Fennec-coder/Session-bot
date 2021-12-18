@@ -37,20 +37,28 @@ def daily_schedule(user_id=0, week=False, day=0):
         r_day = (datetime.utcnow() + user_delta).date().weekday()
         localtime = datetime.utcnow() + user_delta
 
+        time_left = ''
+        current_occupation = False
+
         for lesson in range(len(table)):
             st_sch = (schedule.table_E if week else schedule.table_NE)[day][lesson]
 
             if settings.time_in_schedule_switch:
                 next_l = datetime.combine(date.today(), st_sch) + schedule.time_of_one_lesson
 
+                item_number = f"{st_sch.strftime('%H:%M')}:"
                 if day == r_day and next_l.time() > localtime.time() > st_sch:
-                    item_number = f"{(datetime.min + (next_l - localtime)).strftime('%H:%M')}:>"
-                else:
-                    item_number = f"{st_sch.strftime('%H:%M')}:"
+                    time_left = f"{(datetime.min + (next_l - localtime)).strftime('%H:%M')}"
+                    item_number = f"*{st_sch.strftime('%H:%M')}:"
+                    current_occupation = True
+
             else:
                 item_number = f"{lesson + 1}:"
 
-            answer += f"{item_number} {table[lesson]}\n"
+            answer += f"{item_number} {table[lesson]}{'*' if current_occupation else ''}\n"
+            current_occupation = False
+
+        answer += f"\ntime left: {time_left}"
 
         return answer
     else:
