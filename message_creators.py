@@ -26,7 +26,7 @@ def daily_schedule(user_id=0, week=False, day=0):
         schedule = template.session.get(template.Schedule, timetable.id_of_schedule)
 
         if timetable is not None:
-            table = timetable.table_E[day] if week else timetable.table_NE[day]
+            table = tools.remove_last_empty_slots(timetable.table_E[day] if week else timetable.table_NE[day])
         else:
             return f"I did not find a schedule with this id ({settings.id_of_the_selected_schedule}, " \
                    f"it may have been deleted)"
