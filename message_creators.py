@@ -58,7 +58,7 @@ def daily_schedule(user_id=0, week=False, day=0):
             answer += f"{item_number} {table[lesson]}{'*' if current_occupation else ''}\n"
             current_occupation = False
 
-        answer += f"\ntime left: {time_left}"
+        answer += f"\ntime left: {time_left}" if time_left != '' else "\n"
 
         return answer
     else:
