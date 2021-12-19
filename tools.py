@@ -1,5 +1,6 @@
 # source: my old version of this bot https://gitlab.com/FFenek/session-bot/-/blob/master/tools.py
 import os
+from copy import copy
 from datetime import datetime, timedelta, date
 import time
 
@@ -109,8 +110,8 @@ def from_xlsx_to_array_schedule(message):
     w0 = []
     w1 = []
     for i in range(7):
-        w1.append(delete_nans(array[i+2][5:14]))
-        w0.append(delete_nans(array[i+2][20:30]))
+        w1.append(delete_nans(array[i + 2][5:14]))
+        w0.append(delete_nans(array[i + 2][20:30]))
 
     answer = [w0, w1]
     return answer
@@ -140,3 +141,13 @@ def from_xlsx_to_name(message):
     file = pd.read_excel(f"temp/{str(message)}.xlsx")
     array = [list(i) for i in file.to_numpy()]
     return str(array[0][4])
+
+
+def remove_last_empty_slots(schedule):
+    schedule.reverse()
+    answer = copy(schedule)
+    for element in schedule:
+        if element != '': break
+        answer.pop(0)
+    answer.reverse()
+    return answer
