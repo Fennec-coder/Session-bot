@@ -128,7 +128,7 @@ def today(message):
     print(f"today--> name: {current_user.username}; day: {day}; "
           f"time: {datetime.utcnow() + timedelta(minutes=current_user.utc * 60)}")
 
-    message_id = bot.send_message(message.chat.id, answer).message_id
+    message_id = bot.send_message(message.chat.id, answer, parse_mode="Markdown").message_id
 
     position = session.get(Positions, current_user.id)
     position.last_message_id = message_id
