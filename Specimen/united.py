@@ -4,6 +4,7 @@ from Specimen.Settings import *
 from Specimen.Positions import *
 from Specimen.Timerable import *
 from Specimen.Schedule import *
+from Specimen.ExternalSchedules import *
 from Specimen.set import *
 
 if not database_exists(url):

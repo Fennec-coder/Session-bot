@@ -307,4 +307,9 @@ def time_in_schedule_switch(message):
                      f"{'start TIME of classes' if settings.time_in_schedule_switch else 'class NUMBER'}")
 
 
+def _external_schedules(user_id, table):
+    current_user = session.get(User, user_id)
+    external_schedules = session.query(Timetable)
+
+
 bot.polling(none_stop=True)
